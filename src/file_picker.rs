@@ -55,8 +55,7 @@ pub fn validate_paths(paths: &[PathBuf]) -> (Vec<&PathBuf>, Vec<(&PathBuf, Valid
             .extension()
             .and_then(|e| e.to_str())
             .is_some_and(|ext| {
-                ALLOWED_IMG_EXTENSIONS.contains(&ext)
-
+                ALLOWED_IMG_EXTENSIONS.contains(&ext.to_lowercase().as_str())
             });
         if !file_ext_valid {
             errors.push((path, ValidationError::UnsupportedFmt));
@@ -105,7 +104,7 @@ mod tests {
 
     #[test]
     fn validate_valid_image_extension() {
-        let tmp = std::env::temp_dir().join("test_validate.png");
+        let tmp = std::env::temp_dir().join("ci_test_lowercase.png");
         fs::write(&tmp, "cosplaying png").unwrap();
         let paths = vec![tmp.clone()];
         let (valid, errors) = validate_paths(&paths);
@@ -116,7 +115,7 @@ mod tests {
 
     #[test]
     fn validate_case_insensitive_extension() {
-        let tmp = std::env::temp_dir().join("test_validate.PNG");
+        let tmp = std::env::temp_dir().join("ci_test_uppercase.PNG");
         fs::write(&tmp, "cosplaying png").unwrap();
         let paths = vec![tmp.clone()];
         let (valid, errors) = validate_paths(&paths);
