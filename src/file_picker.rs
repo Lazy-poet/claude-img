@@ -1,10 +1,8 @@
-use std::path::{Path, PathBuf};
 use rfd::FileDialog;
 use std::fmt;
-pub const ALLOWED_IMG_EXTENSIONS: &[&str] = &[
-    "png", "jpg", "jpeg", "gif", "webp", "bmp", "tiff", "tif",
-];
-
+use std::path::{Path, PathBuf};
+pub const ALLOWED_IMG_EXTENSIONS: &[&str] =
+    &["png", "jpg", "jpeg", "gif", "webp", "bmp", "tiff", "tif"];
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum ValidationError {
@@ -23,18 +21,13 @@ impl fmt::Display for ValidationError {
     }
 }
 
-
 /// Opens the user's native file picker dialog for selecting images.
-pub fn pick_images(directory: Option<&Path>) -> Vec<PathBuf> {
-    let mut dialog = FileDialog::new()
+pub fn pick_images() -> Vec<PathBuf> {
+    FileDialog::new()
         .set_title("Select context images for Claude")
-        .add_filter("Images", ALLOWED_IMG_EXTENSIONS);
-
-    if let Some(dir) = directory {
-        dialog = dialog.set_directory(dir);
-    }
-
-    dialog.pick_files().unwrap_or_default()
+        .add_filter("Images", ALLOWED_IMG_EXTENSIONS)
+        .pick_files()
+        .unwrap_or_default()
 }
 
 /// Validates a list of paths that they exist and have a valid extension & returns a tuple (valid, errors).
@@ -54,9 +47,7 @@ pub fn validate_paths(paths: &[PathBuf]) -> (Vec<&PathBuf>, Vec<(&PathBuf, Valid
         let file_ext_valid = path
             .extension()
             .and_then(|e| e.to_str())
-            .is_some_and(|ext| {
-                ALLOWED_IMG_EXTENSIONS.contains(&ext.to_lowercase().as_str())
-            });
+            .is_some_and(|ext| ALLOWED_IMG_EXTENSIONS.contains(&ext.to_lowercase().as_str()));
         if !file_ext_valid {
             errors.push((path, ValidationError::UnsupportedFmt));
             continue;
