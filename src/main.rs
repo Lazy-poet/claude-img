@@ -1,4 +1,5 @@
 mod file_picker;
+mod metadata;
 
 use anyhow::{bail, Result};
 use std::io::{self, Write};
@@ -32,7 +33,8 @@ fn run() -> Result<()> {
     let stdout = io::stdout();
     let mut out = stdout.lock();
     for path in &valid {
-        writeln!(out, "{}", path.display())?;
+        let meta = metadata::extract(&path)?;
+        writeln!(out, "{:?}", meta)?;
     }
 
     Ok(())
