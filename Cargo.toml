@@ -2,7 +2,12 @@
 name = "claude-img"
 version = "0.1.0"
 edition = "2021"
-description = "Batch image picker with metadata for Claude Code"
+description = "Native file picker for batch-uploading images to Claude Code conversations"
+license = "MIT"
+repository = "https://github.com/lazy-poet/claude-img"
+keywords = ["claude", "images", "cli", "file-picker"]
+categories = ["command-line-utilities"]
+readme = "README.md"
 
 [dependencies]
 rfd = "0.17"

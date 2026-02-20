@@ -1,6 +1,6 @@
 use rfd::FileDialog;
 use std::fmt;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 pub const ALLOWED_IMG_EXTENSIONS: &[&str] =
     &["png", "jpg", "jpeg", "gif", "webp", "bmp", "tiff", "tif"];
 
