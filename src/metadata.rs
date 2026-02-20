@@ -1,6 +1,6 @@
+use anyhow::{Context, Result};
 use std::fs;
 use std::path::{Path, PathBuf};
-use anyhow::{Context, Result};
 
 #[derive(Debug, Clone)]
 pub struct ImageMetadata {
@@ -8,8 +8,8 @@ pub struct ImageMetadata {
     pub file_name: String,
     pub size_bytes: u64,
     pub size_display: String,
-    pub width: Option<u32>,
-    pub height: Option<u32>,
+    pub width: u32,
+    pub height: u32,
     pub format: Option<String>,
 }
 
@@ -18,9 +18,7 @@ pub struct ImageMetadata {
 /// Reads file headers for dimensions.
 /// Dimension/format failures degrade to None rather than failing the whole file.
 pub fn extract(path: &Path) -> Result<ImageMetadata> {
-    let canonical_path = path
-        .canonicalize()
-        .context("Failed to resolve path")?;
+    let canonical_path = path.canonicalize().context("Failed to resolve path")?;
 
     let fs_meta = fs::metadata(&canonical_path)
         .with_context(|| format!("Failed to read file metadata: {}", canonical_path.display()))?;
@@ -30,7 +28,8 @@ pub fn extract(path: &Path) -> Result<ImageMetadata> {
         .map(|n| n.to_string_lossy().into_owned())
         .unwrap_or_else(|| "unknown".into());
 
-    let (width, height, format) = read_image_info(&canonical_path);
+    let (width, height, format) =
+        read_image_info(&canonical_path).context("Not a valid image file")?;
 
     Ok(ImageMetadata {
         path: canonical_path,
@@ -39,29 +38,18 @@ pub fn extract(path: &Path) -> Result<ImageMetadata> {
         size_display: format_size(fs_meta.len()),
         width,
         height,
-        format,
+        format
     })
 }
 
 /// Read image dimensions and format from file headers.
-/// Returns None on errors instead of failing.
-fn read_image_info(path: &Path) -> (Option<u32>, Option<u32>, Option<String>) {
-    let reader = match image::ImageReader::open(path) {
-        Ok(r) => r,
-        Err(_) => return (None, None, None),
-    };
-
-    let reader = match reader.with_guessed_format() {
-        Ok(r) => r,
-        Err(_) => return (None, None, None),
-    };
-
+/// Returns Err if the file is not a valid image.
+fn read_image_info(path: &Path) -> Result<(u32, u32, Option<String>)> {
+    let reader = image::ImageReader::open(path).context("Failed to open image")?;
+    let reader = reader.with_guessed_format().context("Failed to detect format")?;
     let format = reader.format().map(|f| format!("{:?}", f));
-
-    match reader.into_dimensions() {
-        Ok((w, h)) => (Some(w), Some(h), format),
-        Err(_) => (None, None, format),
-    }
+    let (w, h) = reader.into_dimensions().context("Failed to read image dimensions")?;
+    Ok((w, h, format))
 }
 
 pub fn format_size(bytes: u64) -> String {
