@@ -10,8 +10,8 @@ categories = ["command-line-utilities"]
 readme = "README.md"
 
 [dependencies]
-rfd = "0.17"
-image = { version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "webp", "bmp", "tiff"] }
+rfd = "0.17.2"
+imagesize = "0.14.0"
 anyhow = "1.0.101"
 
 [profile.release]
@@ -19,3 +19,4 @@ opt-level = "z"
 lto = true
 strip = true
 codegen-units = 1
+panic = "abort"

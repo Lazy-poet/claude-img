@@ -2,8 +2,8 @@ mod file_picker;
 mod metadata;
 mod writer;
 
-use std::io::{self, Write};
 use anyhow::Result;
+use std::io::{self, Write};
 use writer::write_output;
 
 fn main() {
@@ -40,7 +40,10 @@ fn run() -> Result<()> {
         match metadata::extract(path) {
             Ok(meta) => images.push(meta),
             Err(_) => {
-                let name = path.file_name().map(|n| n.to_string_lossy()).unwrap_or_default();
+                let name = path
+                    .file_name()
+                    .map(|n| n.to_string_lossy())
+                    .unwrap_or_default();
                 eprintln!("Skipped: {} (not a valid image)", name);
             }
         }
