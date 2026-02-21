@@ -36,10 +36,10 @@ esac
 INSTALL_DIR="$HOME/.local/bin"
 mkdir -p "$INSTALL_DIR"
 
-# --- Download binary ---
+# --- Download binary from S3 ---
 echo "Installing claude-img for $OS ($ARCH)..."
-LATEST_URL="https://github.com/$REPO/releases/latest/download/$BINARY"
-curl --proto '=https' --tlsv1.2 -fsSL "$LATEST_URL" -o "$INSTALL_DIR/claude-img"
+S3_BASE="https://claude-img-releases.s3.eu-north-1.amazonaws.com"
+curl --proto '=https' --tlsv1.2 -fsSL "$S3_BASE/latest/$BINARY" -o "$INSTALL_DIR/claude-img"
 chmod +x "$INSTALL_DIR/claude-img"
 
 # --- Install Claude Code skill ---

@@ -81,3 +81,16 @@ jobs:
             install.sh
             install.ps1
           generate_release_notes: true
+
+      - name: Upload to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-north-1
+        run: |
+          aws s3 cp claude-img-macos-arm64 s3://claude-img-releases/latest/claude-img-macos-arm64
+          aws s3 cp claude-img-macos-x86_64 s3://claude-img-releases/latest/claude-img-macos-x86_64
+          aws s3 cp claude-img-linux-x86_64 s3://claude-img-releases/latest/claude-img-linux-x86_64
+          aws s3 cp claude-img-windows-x86_64.exe s3://claude-img-releases/latest/claude-img-windows-x86_64.exe
+          aws s3 cp install.sh s3://claude-img-releases/install.sh
+          aws s3 cp install.ps1 s3://claude-img-releases/install.ps1
