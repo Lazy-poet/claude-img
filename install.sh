@@ -49,9 +49,19 @@ if [ -f "$SKILL_DIR/SKILL.md" ]; then
     echo "Existing /img skill found. Backing up to $SKILL_DIR/SKILL.md.bak"
     cp "$SKILL_DIR/SKILL.md" "$SKILL_DIR/SKILL.md.bak"
 fi
-curl --proto '=https' --tlsv1.2 -fsSL \
-    "https://raw.githubusercontent.com/$REPO/main/skill/SKILL.md" \
-    -o "$SKILL_DIR/SKILL.md"
+cat > "$SKILL_DIR/SKILL.md" << 'SKILL_EOF'
+---
+name: img
+description: Upload images to this conversation through your native file picker
+allowed-tools: Bash(claude-img)
+---
+
+Run the file picker and attach the selected images:
+
+!`claude-img`
+
+If images were attached above (lines starting with @), analyze them. If no images were attached or the output shows "Skipped" or "No valid images", let the user know and suggest they try again with valid image files. $ARGUMENTS
+SKILL_EOF
 
 # --- Check PATH ---
 if ! echo "$PATH" | tr ':' '\n' | grep -qx "$INSTALL_DIR"; then

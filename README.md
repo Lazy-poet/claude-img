@@ -8,12 +8,12 @@ Select one or multiple images from disk with a single `/img` command.
 
 **macOS / Linux:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/lazy-poet/claude-img/main/install.sh | bash
+curl -fsSL https://github.com/lazy-poet/claude-img/releases/latest/download/install.sh | bash
 ```
 
 **Windows (PowerShell):**
 ```powershell
-irm https://raw.githubusercontent.com/lazy-poet/claude-img/main/install.ps1 | iex
+irm https://github.com/lazy-poet/claude-img/releases/latest/download/install.ps1 | iex
 ```
 
 No dependencies. Downloads a pre-built binary and sets up the `/img` skill for Claude Code.
